@@ -5,7 +5,14 @@ namespace :snippets_dir do
   task :find do
     vim_dir = File.join(ENV['VIMFILES'] || ENV['HOME'] || ENV['USERPROFILE'], RUBY_PLATFORM =~ /mswin|msys|mingw32/ ? "vimfiles" : ".vim")
     pathogen_dir = File.join(vim_dir, "bundle")
-    @snippets_dir = File.directory?(pathogen_dir) ? File.join(pathogen_dir, "snipmate", "snippets") : File.join(vim_dir, "snippets")
+    # Adding a temporary solution to install snipmate-snippets and make it works with vundle
+    # https://github.com/cutalion/snipmate-snippets/commit/51eecccac696c2ec1c269b29db6b20389dc83e3f
+    possible_dirs = [
+        File.join(vim_dir, 'snippets'),
+        File.join(vim_dir, 'bundle', 'snipmate', 'snippets'),
+        File.join(vim_dir, 'bundle', 'snipmate.vim', 'snippets')
+    ]
+    @snippets_dir = possible_dirs.find{ |dir| File.directory? dir }
   end
 
   desc "Purge the contents of the vim snippets directory"
